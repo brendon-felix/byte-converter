@@ -114,9 +114,10 @@ pub fn run() -> iced::Result {
 // }
 
 fn button_style(theme: &Theme, status: button::Status) -> button::Style {
-    let mut style = button::secondary(theme, status);
-    style.border.radius = border::Radius::new(0);
-    style
+    // let mut style = button::secondary(theme, status);
+    // style.border.radius = border::Radius::new(0);
+    // style
+    button::secondary(theme, status)
 }
 
 // pub fn button_style(theme: &Theme, status: button::Status) -> button::Style {
