@@ -7,9 +7,5 @@ Simple tool for converting between hexadecimal, unsigned and signed representati
 ## Running
 
 ```bash
-cargo build --release
-```
-
-```bash
-./byte-converter.exe
+cargo run --release
 ```
