@@ -2,10 +2,12 @@ use iced::{
     self,
     window,
     color,
+    font,
     Theme,
+    // Font,
     // Background,
     // Border,
-    border,
+    // border,
     Element,
     // Padding,
     // padding,
@@ -31,6 +33,7 @@ use iced::{
 const NUM_BITS: usize = 8;
 const PRIM_COLOR: u32 = 0xE0E0E0;
 const WINDOW_SIZE: (f32, f32) = (750.0, 200.0);
+// const MONO_FONT: &[u8] = include_bytes!("../fonts/FiraCode-Medium.ttf");
 
 pub struct State {
     value: u8,
@@ -57,6 +60,8 @@ pub enum Message {
     Toggle(usize),
     Clear,
     Invert,
+    ShiftLeft,
+    ShiftRight,
     HexChanged(String),
     IntChanged(String),
     UintChanged(String),
@@ -90,9 +95,16 @@ pub fn run() -> iced::Result {
         resizable: false,
         ..Default::default()
     };
+    // font::load(MONO_FONT);
+    // let font = Font {
+    //     family: font::Family::Name("Fira"),
+    //     ..Default::default()
+    // };
     iced::application("Byte Converter", update, view)
         .window(window_settings)
         .theme(theme)
+        // .default_font(font)
+        // .font(MONO_FONT)
         .run()
 }
 
@@ -178,23 +190,9 @@ fn view(state: &State) -> Element<Message> {
         ];
         button_row = button_row.push(col);
     }
-    let command_width = 70;
-    let commands = column![
-        Button::new(container("Clear").center_x(Fill).center_y(Fill))
-            .style(button_style)
-            .width(command_width)
-            .height(Fill)
-            .on_press(Message::Clear),
-        Button::new(container("Invert").center_x(Fill).center_y(Fill))
-            .style(button_style)
-            .width(command_width)
-            .height(Fill)
-            .on_press(Message::Invert),
-    ]
-    // .padding(padding::left(5))
-    .spacing(5);
-    button_row = button_row.push(commands);
-    let col = column![
+    
+    // button_row = button_row.push(commands);
+    let main_col = column![
         container(button_row)
             .padding(10)
             .height(100)
@@ -205,6 +203,7 @@ fn view(state: &State) -> Element<Message> {
                     container(
                         text("Hex:")
                             .size(20)
+                            // .font(MONO_FONT)
                     ).center_y(Fill),
                     container(
                         text_input(&state.hex_string, &state.hex_string)
@@ -246,6 +245,35 @@ fn view(state: &State) -> Element<Message> {
             .spacing(20)
         ).center_x(Fill)
     ];
+
+    
+    let command_width = 70;
+    let commands = column![
+        Button::new(container("Clear").center_x(Fill).center_y(Fill))
+            .style(button_style)
+            .width(command_width)
+            .height(Fill)
+            .on_press(Message::Clear),
+        Button::new(container("Invert").center_x(Fill).center_y(Fill))
+            .style(button_style)
+            .width(command_width)
+            .height(Fill)
+            .on_press(Message::Invert),
+        Button::new(container("<<").center_x(Fill).center_y(Fill))
+            .style(button_style)
+            .width(command_width)
+            .height(Fill)
+            .on_press(Message::ShiftLeft),
+        Button::new(container(">>").center_x(Fill).center_y(Fill))
+            .style(button_style)
+            .width(command_width)
+            .height(Fill)
+            .on_press(Message::ShiftRight),
+    ]
+    // .padding(padding::left(5))
+    .spacing(5);
+    let command_col = container(commands).center_y(Fill);
+    let main_row = row![main_col, command_col];
     // container(
     //     mouse_area(
     //         col
@@ -258,7 +286,7 @@ fn view(state: &State) -> Element<Message> {
     // .into()
 
     mouse_area(
-        container(col)
+        container(main_row)
             .padding(10)
             .center_x(Fill)
             .center_y(Fill)
@@ -333,6 +361,14 @@ fn update(state: &mut State, message: Message) {
         }
         Message::Invert => {
             state.value = !state.value;
+            update_strings(state);
+        }
+        Message::ShiftLeft => {
+            state.value = state.value << 1;
+            update_strings(state);
+        }
+        Message::ShiftRight => {
+            state.value = state.value >> 1;
             update_strings(state);
         }
         Message::HexChanged(new_string) => set_from_hex(state, new_string),
