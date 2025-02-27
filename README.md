@@ -1,18 +1,5 @@
 # Byte Converter
 
-Simple tool for converting between hexadecimal, unsigned and signed representations of an 8-bit value.
-
-
-
-## Running
-
-```bash
-cargo run --release
-```
-
-
-# Byte Converter
-
 ![](./window.png)
 
 A simple tool for converting between hexadecimal, unsigned and signed representations of an 8-bit value.
@@ -45,4 +32,10 @@ Run the project:
 
 ```sh
 cargo run --release
+```
+
+or copy the executable somewhere else
+```sh
+cp target/release/byte-converter.exe ~/byte-converter/
+~/byte-converter.exe
 ```
